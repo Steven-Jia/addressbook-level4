@@ -273,6 +273,9 @@ public class AddressBook implements ReadOnlyAddressBook {
      */
     public void addTransaction(Transaction transaction) throws CommandException {
         if (transaction.getTransactionType().toString().equals(TransactionType.TRANSACTION_TYPE_PAYDEBT)) {
+            if (transaction.getPayees().asObservableList().size() > 1) {
+                throw new CommandException("Paydebt transactions cannot have more than 1 payee");
+            }
             Person payeeToFind = transaction.getPayees().asObservableList().get(0);
             if (debtsTable.size() != 0
                     && (debtsTable.get(transaction.getPayer()).get(payeeToFind) == null
